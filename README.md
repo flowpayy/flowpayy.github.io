@@ -5,6 +5,67 @@
 
 ---
 
+## 🚀 How to Run Everything
+
+Clone the repo first:
+```bash
+git clone https://github.com/flowpayy/flowpayy.github.io.git
+cd flowpayy.github.io
+```
+
+### Terminal 1 — Backend API (required)
+```bash
+cd backend
+pip install fastapi uvicorn httpx pydantic requests
+python -m uvicorn app.main:app --reload --port 8000
+```
+✅ API live at: **http://localhost:8000**  
+✅ Swagger docs: **http://localhost:8000/docs**
+
+### Terminal 2 — Seed Demo Accounts (run once)
+```bash
+cd backend
+python seed.py
+```
+This creates `Alex` (payee) and `Jordan` (payer) in Capital One Nessie sandbox with real account IDs.
+
+### Terminal 3 — Frontend Dashboard (optional)
+```bash
+cd frontend2
+npm install
+npm run dev
+```
+✅ Dashboard at: **http://localhost:5173**
+
+### Terminal 4 — Docs & Pitch Site (optional)
+```bash
+python -m http.server 3000 --directory docs
+```
+✅ Pitch at: **http://localhost:3000/pitch.html**  
+✅ Judge guide: **http://localhost:3000/judge-guide.html**
+
+### Check API is live (PowerShell)
+```powershell
+Invoke-RestMethod "http://localhost:8000/v1/health"
+```
+
+### Run the Python demo (all scenarios end-to-end)
+```bash
+pip install httpx
+python demo.py
+```
+
+### Demo Account IDs (paste into any endpoint)
+```
+Alex  (payee / freelancer) → 69a268d595150878eaffa3ba
+Jordan (payer / client)    → 69a268d595150878eaffa3bc
+```
+
+> **See [`ENDPOINTS.md`](./ENDPOINTS.md)** for PowerShell, Python, and JavaScript code for every endpoint.
+
+---
+
+
 ## What is FlowPay?
 
 FlowPay is a payment API that exposes three primitives missing from every Western payment platform:
