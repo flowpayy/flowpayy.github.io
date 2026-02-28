@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowPay — Judge Guide</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #03030A;
+            --bg2: #0C0C16;
+            --bg3: #13131F;
+            --border: #1E1E30;
+            --text: #EEEEF5;
+            --muted: #7777A0;
+            --blue: #4F7BFF;
+            --purple: #9B6DFF;
+            --green: #14E59A;
+            --red: #FF4D6A;
+            --orange: #FF8A3D
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh
+        }
+
+        aside {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 260px;
+            background: var(--bg2);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            overflow-y: auto
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 1.05rem;
+            background: linear-gradient(135deg, #4F7BFF, #9B6DFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: .25rem
+        }
+
+        .logo-sub {
+            font-size: .7rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            display: block
+        }
+
+        .nav-group {
+            margin-bottom: 1.5rem
+        }
+
+        .nav-group-label {
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: .6rem;
+            padding-left: .5rem
+        }
+
+        .nav-group a {
+            display: block;
+            padding: .45rem .65rem;
+            font-size: .82rem;
+            color: var(--muted);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background .15s, color .15s
+        }
+
+        .nav-group a:hover {
+            background: var(--bg3);
+            color: var(--text)
+        }
+
+        .nav-group a.active {
+            background: rgba(79, 123, 255, .12);
+            color: var(--blue);
+            font-weight: 600
+        }
+
+        main {
+            margin-left: 260px;
+            padding: 3rem 4rem;
+            max-width: 960px
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .25rem .65rem;
+            border-radius: 999px;
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase
+        }
+
+        .badge-blue {
+            background: rgba(79, 123, 255, .12);
+            color: var(--blue);
+            border: 1px solid rgba(79, 123, 255, .25)
+        }
+
+        .badge-green {
+            background: rgba(20, 229, 154, .1);
+            color: var(--green);
+            border: 1px solid rgba(20, 229, 154, .2)
+        }
+
+        .badge-orange {
+            background: rgba(255, 138, 61, .1);
+            color: var(--orange);
+            border: 1px solid rgba(255, 138, 61, .2)
+        }
+
+        .badge-purple {
+            background: rgba(155, 109, 255, .1);
+            color: var(--purple);
+            border: 1px solid rgba(155, 109, 255, .2)
+        }
+
+        .badge-red {
+            background: rgba(255, 77, 106, .1);
+            color: var(--red);
+            border: 1px solid rgba(255, 77, 106, .2)
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -.04em;
+            margin-bottom: .5rem
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 2.5rem 0 1rem;
+            letter-spacing: -.02em;
+            display: flex;
+            align-items: center;
+            gap: .75rem
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: .4rem
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.75
+        }
+
+        p strong {
+            color: var(--text)
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0
+        }
+
+        .step {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.25rem 0;
+            position: relative;
+            padding-left: 4rem
+        }
+
+        .step-num {
+            position: absolute;
+            left: 1.25rem;
+            top: 1.4rem;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            font-size: .75rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff
+        }
+
+        .step h3 {
+            color: var(--text)
+        }
+
+        pre {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .78rem;
+            line-height: 1.65;
+            color: #C8C8E8
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .82rem;
+            background: var(--bg3);
+            padding: .15rem .4rem;
+            border-radius: 4px;
+            color: #a5b4fc
+        }
+
+        .response {
+            background: #070710;
+            border: 1px solid rgba(20, 229, 154, .2);
+            border-left: 3px solid var(--green);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: .75rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            line-height: 1.65;
+            color: #7BE8B4;
+            overflow-x: auto
+        }
+
+        .tip {
+            background: rgba(79, 123, 255, .06);
+            border: 1px solid rgba(79, 123, 255, .2);
+            border-left: 3px solid var(--blue);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0
+        }
+
+        .tip p {
+            color: var(--text);
+            font-size: .87rem
+        }
+
+        .warn {
+            background: rgba(255, 138, 61, .06);
+            border: 1px solid rgba(255, 138, 61, .2);
+            border-left: 3px solid var(--orange);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0
+        }
+
+        .warn p {
+            color: var(--text);
+            font-size: .875rem
+        }
+
+        .checklist div {
+            display: flex;
+            align-items: flex-start;
+            gap: .75rem;
+            padding: .6rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: .875rem
+        }
+
+        .checklist div:last-child {
+            border-bottom: none
+        }
+
+        .checklist .c-label {
+            color: var(--text);
+            flex: 1
+        }
+
+        .checklist .c-badge {
+            flex-shrink: 0
+        }
+
+        .endpoint-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0
+        }
+
+        .endpoint-table th {
+            text-align: left;
+            color: var(--muted);
+            font-size: .7rem;
+            font-weight: 600;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            padding: .5rem .75rem;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .endpoint-table td {
+            padding: .65rem .75rem;
+            font-size: .82rem;
+            border-bottom: 1px solid rgba(30, 30, 48, .5);
+            vertical-align: top
+        }
+
+        .endpoint-table td:first-child {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            color: var(--blue)
+        }
+
+        .endpoint-table td:nth-child(2) {
+            color: var(--orange);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .72rem
+        }
+
+        .endpoint-table td:nth-child(3) {
+            color: var(--muted)
+        }
+
+        .method-post {
+            color: var(--green)
+        }
+
+        .method-get {
+            color: var(--blue)
+        }
+
+        @media(max-width:768px) {
+            .layout {
+                grid-template-columns: 1fr
+            }
+
+            aside {
+                display: none
+            }
+
+            main {
+                margin-left: 0;
+                padding: 2rem 1.25rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+
+        <aside>
+            <span class="logo">⚡ FlowPay</span>
+            <span class="logo-sub">Judge Quick-Start Guide</span>
+
+            <div class="nav-group">
+                <div class="nav-group-label">Overview</div>
+                <a href="#tldr" class="active">TL;DR — 30 seconds</a>
+                <a href="#servers">What's Running</a>
+                <a href="#eval">Evaluation Checklist</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Demo Scenarios</div>
+                <a href="#s1">Scenario 1: Pull Collect</a>
+                <a href="#s2">Scenario 2: Group Pool</a>
+                <a href="#s3">Scenario 3: Auto-Refund</a>
+                <a href="#s4">Scenario 4: FlowBridge FX</a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Advanced</div>
+                <a href="#idempotency">Idempotency</a>
+                <a href="#errors">Error Responses</a>
+                <a href="#endpoints">All Endpoints</a>
+            </div>
+            <div style="margin-top:auto;padding-top:2rem">
+                <a href="pitch.html"
+                    style="display:block;text-align:center;background:linear-gradient(135deg,#4F7BFF,#9B6DFF);color:#fff;padding:.6rem;border-radius:8px;text-decoration:none;font-size:.82rem;font-weight:700">Read
+                    the Pitch →</a>
+                <a href="http://localhost:8000/docs"
+                    style="display:block;text-align:center;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:.5rem;border-radius:8px;text-decoration:none;font-size:.8rem;margin-top:.5rem">Swagger
+                    UI →</a>
+            </div>
+        </aside>
+
+        <main>
+
+            <!-- TL;DR -->
+            <section id="tldr">
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+                    <span class="badge badge-blue">HackIllinois 2026</span>
+                    <span class="badge badge-orange">Stripe Track</span>
+                    <span class="badge badge-purple">Capital One Nessie</span>
+                </div>
+                <h1>Judge Quick-Start Guide</h1>
+                <p style="font-size:1rem;color:var(--text);margin-top:.5rem">Everything you need to evaluate FlowPay in
+                    under 5 minutes.</p>
+
+                <div class="tip" style="margin-top:1.5rem">
+                    <p><strong>TL;DR (30 seconds):</strong> FlowPay is an API that adds 3 payment primitives no Western
+                        API has: (1) a pull payment request where the receiver asks and the payer approves, (2) group
+                        collection toward a goal with auto-refund, and (3) cross-border payments with live FX rate
+                        locking. Every money movement calls a real Capital One Nessie banking API. You can test the
+                        whole thing right now with the curl commands below.</p>
+                </div>
+
+                <p style="margin-top:1.5rem"><strong>What makes this different from Stripe/PayPal/Venmo?</strong> Those
+                    are all push systems — you send money. FlowPay builds the pull side: the receiver asks, the payer
+                    decides. This is how 1 billion people pay daily in India and China. It's never been exposed as a
+                    clean developer API in the West.</p>
+            </section>
+
+            <hr>
+
+            <!-- SERVERS -->
+            <section id="servers">
+                <h2><span class="badge badge-green">▶</span> What's Running Right Now</h2>
+                <table class="endpoint-table">
+                    <tr>
+                        <th>URL</th>
+                        <th>What it is</th>
+                        <th>How to use it</th>
+                    </tr>
+                    <tr>
+                        <td>localhost:8000</td>
+                        <td style="color:var(--text)">FastAPI backend — the actual API</td>
+                        <td>Send curl commands here</td>
+                    </tr>
+                    <tr>
+                        <td>localhost:8000/docs</td>
+                        <td style="color:var(--text)">Interactive Swagger UI</td>
+                        <td>Click "Try it out" on any endpoint</td>
+                    </tr>
+                    <tr>
+                        <td>localhost:5173</td>
+                        <td style="color:var(--text)">React demo dashboard</td>
+                        <td>Click buttons to run the 4 scenarios</td>
+                    </tr>
+                    <tr>
+                        <td>localhost:3000</td>
+                        <td style="color:var(--text)">Pitch + docs site</td>
+                        <td>You're here! Also has pitch.html</td>
+                    </tr>
+                </table>
+
+                <div class="warn" style="margin-top:1rem">
+                    <p><strong>Demo accounts (pre-seeded on Capital One Nessie):</strong><br>
+                        Alex (freelancer / payee): <code>69a268d595150878eaffa3ba</code><br>
+                        Jordan (client / payer): <code>69a268d595150878eaffa3bc</code></p>
+                </div>
+            </section>
+
+            <hr>
+
+            <!-- EVAL CHECKLIST -->
+            <section id="eval">
+                <h2><span class="badge badge-blue">✓</span> Evaluation Checklist</h2>
+                <div class="checklist">
+                    <div>
+                        <span class="c-label"><strong>Functionality</strong> — Does the API work? Do endpoints return
+                            200/2xx for valid inputs?</span>
+                        <span class="c-badge"><span class="badge badge-green">✅ Yes — see all 4 scenarios
+                                below</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Error handling</strong> — Are errors informative with proper HTTP
+                            status codes?</span>
+                        <span class="c-badge"><span class="badge badge-green">✅ Yes — see Error Responses
+                                section</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>POST endpoints that modify state</strong> — Beyond GETs?</span>
+                        <span class="c-badge"><span class="badge badge-green">✅ 11 POST endpoints, 5 GET</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Corresponding GETs for every POST object</strong></span>
+                        <span class="c-badge"><span class="badge badge-green">✅ GET /v1/collects/{id}, /pools/{id},
+                                etc.</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Pagination + filtering on list endpoints</strong></span>
+                        <span class="c-badge"><span class="badge badge-green">✅ ?limit=&offset=&status=</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Idempotency</strong> — Same request twice = same result?</span>
+                        <span class="c-badge"><span class="badge badge-green">✅ Idempotency-Key header on all
+                                POSTs</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Documentation</strong> — Can developers understand how to use
+                            it?</span>
+                        <span class="c-badge"><span class="badge badge-green">✅ README + Swagger + this page +
+                                pitch.html</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Innovation</strong> — Is this solving a real problem in a new
+                            way?</span>
+                        <span class="c-badge"><span class="badge badge-blue">★ 3 primitives that don't exist in any
+                                Western API</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Uses state in an interesting way</strong> — Beyond stateless
+                            CRUD?</span>
+                        <span class="c-badge"><span class="badge badge-blue">★ Full state machines + auto-refund + FX
+                                rate locks</span></span>
+                    </div>
+                    <div>
+                        <span class="c-label"><strong>Capital One Nessie integration</strong></span>
+                        <span class="c-badge"><span class="badge badge-purple">★ Real transfers on every
+                                approve/contribute/remit</span></span>
+                    </div>
+                </div>
+            </section>
+
+            <hr>
+
+            <!-- SCENARIO 1 -->
+            <section id="s1">
+                <h2><span class="badge badge-blue">01</span> Scenario 1 — Pull Payment (Collect)</h2>
+                <p><strong>Story:</strong> Alex (freelancer) finishes a logo. Instead of sending an invoice and waiting,
+                    she sends a payment request directly to Jordan's account via the API. Jordan sees it and approves.
+                    Money moves instantly.</p>
+                <p style="margin-top:.5rem">This is called a <em>pull payment</em>. The receiver asks; the payer
+                    approves. This is how UPI works across 1 billion daily transactions in India. Stripe has no
+                    equivalent.</p>
+
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Alex creates a payment request</h3>
+                    <pre>curl -X POST http://localhost:8000/v1/collects/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "payee_account_id": "69a268d595150878eaffa3ba",
+    "payer_account_id": "69a268d595150878eaffa3bc",
+    "amount": 4900,
+    "description": "Logo design — Phase 1",
+    "expires_at": "2026-03-10T00:00:00Z"
+  }'</pre>
+                    <div class="response">{ "id": "clct_...", "status": "pending", "amount": 4900 }</div>
+                    <p style="font-size:.83rem">A Collect object is created with status <code>pending</code>. Copy the
+                        <code>id</code> for step 2.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Jordan approves it → real Nessie transfer fires</h3>
+                    <pre>curl -X POST http://localhost:8000/v1/collects/clct_YOUR_ID/approve</pre>
+                    <div class="response">{ "status": "approved", "nessie_transfer_id": "68a268d5..." }</div>
+                    <p style="font-size:.83rem">FlowPay checks Jordan's balance via Nessie, executes a real transfer,
+                        returns the Nessie transfer ID, and fires a <code>collect.approved</code> webhook. Status
+                        becomes <code>approved</code> — cannot be approved again.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h3>Filter Jordan's inbox for pending requests</h3>
+                    <pre>curl "http://localhost:8000/v1/collects?payer_id=69a268d595150878eaffa3bc&status=pending&limit=10"</pre>
+                    <div class="response">[ { "id": "clct_...", "status": "pending", "amount": 4900 }, ... ]</div>
+                    <p style="font-size:.83rem">List endpoint supports <code>payer_id</code>, <code>payee_id</code>,
+                        <code>status</code>, <code>limit</code>, and <code>offset</code>.</p>
+                </div>
+            </section>
+
+            <hr>
+
+            <!-- SCENARIO 2 -->
+            <section id="s2">
+                <h2><span class="badge badge-green">02</span> Scenario 2 — Group Collection (Pool)</h2>
+                <p><strong>Story:</strong> 4 teammates are splitting a group dinner. The organizer creates a pool with a
+                    $100 goal. Each person contributes. When the last contribution hits the goal, the API automatically
+                    settles the full amount to the restaurant's account — no manual step needed.</p>
+
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Create the pool</h3>
+                    <pre>curl -X POST http://localhost:8000/v1/pools/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "goal_amount": 10000,
+    "description": "Team dinner",
+    "organizer_account_id": "69a268d595150878eaffa3ba",
+    "payee_account_id": "69a268d595150878eaffa3ba",
+    "deadline": "2026-03-10T00:00:00Z",
+    "on_deadline_miss": "refund_all"
+  }'</pre>
+                    <div class="response">{ "id": "pool_...", "status": "collecting", "goal_amount": 10000,
+                        "collected_amount": 0 }</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Contribute until goal is reached (auto-settles)</h3>
+                    <pre># Each person contributes. Repeat with different amounts.
+curl -X POST http://localhost:8000/v1/pools/pool_YOUR_ID/contribute \
+  -H "Content-Type: application/json" \
+  -d '{ "payer_account_id": "69a268d595150878eaffa3bc", "amount": 10000 }'</pre>
+                    <div class="response">{ "status": "funded", "collected_amount": 10000 }</div>
+                    <p style="font-size:.83rem">When <code>collected_amount >= goal_amount</code>, the pool status
+                        becomes <code>funded</code> and the full amount is automatically transferred to the payee via
+                        Nessie. Zero manual steps.</p>
+                </div>
+            </section>
+
+            <hr>
+
+            <!-- SCENARIO 3 -->
+            <section id="s3">
+                <h2><span class="badge badge-red">03</span> Scenario 3 — Pool Auto-Refund</h2>
+                <p><strong>Story:</strong> The dinner gets cancelled before everyone pays. The organizer cancels the
+                    pool. Every contributor automatically receives a reverse Nessie transfer — refunded in their
+                    original amount. Nobody has to chase anyone for the money back.</p>
+
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Create and partially fund a pool</h3>
+                    <pre>curl -X POST http://localhost:8000/v1/pools/ \
+  -H "Content-Type: application/json" \
+  -d '{"goal_amount":20000,"description":"Concert tickets","organizer_account_id":"69a268d595150878eaffa3ba","payee_account_id":"69a268d595150878eaffa3ba","deadline":"2026-03-10T00:00:00Z","on_deadline_miss":"refund_all"}'
+
+# Contribute partial amount
+curl -X POST http://localhost:8000/v1/pools/pool_ID/contribute \
+  -H "Content-Type: application/json" \
+  -d '{"payer_account_id":"69a268d595150878eaffa3bc","amount":5000}'</pre>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Cancel → auto-refund fires immediately</h3>
+                    <pre>curl -X POST http://localhost:8000/v1/pools/pool_YOUR_ID/cancel</pre>
+                    <div class="response">{ "status": "cancelled", "refund_ids": ["nessie_transfer_..."] }</div>
+                    <p style="font-size:.83rem">One call. Every contributor gets a real reverse Nessie transfer. The
+                        <code>refund_ids</code> array contains the Nessie transfer IDs for each refund.</p>
+                </div>
+            </section>
+
+            <hr>
+
+            <!-- SCENARIO 4 -->
+            <section id="s4">
+                <h2><span class="badge badge-purple">04</span> Scenario 4 — Cross-Border FX (FlowBridge)</h2>
+                <p><strong>Story:</strong> A developer in India wants to pay $49 to a US freelancer. FlowBridge fetches
+                    the live INR→USD rate, locks it for 30 minutes, quotes the exact rupee amount, and executes both
+                    Nessie transfers on remit. If the FX rate moves more than 2% before execution — the corridor
+                    auto-cancels to protect the payer.</p>
+                <p style="margin-top:.5rem">This primitive doesn't exist in Stripe, PayPal, or any Western API. Wise has
+                    it as a consumer product. FlowBridge exposes it as a developer API.</p>
+
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Create corridor (fetches live INR→USD rate, locks 30 min)</h3>
+                    <pre>curl -X POST http://localhost:8000/v1/corridors/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source_currency": "inr",
+    "target_currency": "usd",
+    "source_account_id": "69a268d595150878eaffa3bc",
+    "target_account_id": "69a268d595150878eaffa3ba",
+    "amount_target": 4900,
+    "description": "Freelancer payment: India to USA",
+    "lock_duration_minutes": 30,
+    "max_rate_drift_pct": 2.0
+  }'</pre>
+                    <div class="response">{ "id": "crdr_...", "status": "rate_locked", "rate_lock": { "rate": 0.01097,
+                        "expires_at": "..." }, "amount_source_cents": 44650, "amount_target_cents": 4900 }</div>
+                    <p style="font-size:.83rem">The response tells you: "To receive $49.00 USD, payer needs to send
+                        ₹446.50 at today's live rate of 0.01097". Rate locked for 30 minutes.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Execute the transfer at the locked rate</h3>
+                    <pre>curl -X POST http://localhost:8000/v1/corridors/crdr_YOUR_ID/remit</pre>
+                    <div class="response">{ "status": "remitted", "nessie_transfer_id": "68a..." }</div>
+                    <p style="font-size:.83rem">Validates rate hasn't drifted &gt;2%, executes the Nessie transfer,
+                        fires the <code>corridor.settled</code> webhook.</p>
+                </div>
+
+                <div class="step" style="border-color:rgba(155,109,255,.25)">
+                    <div class="step-num" style="background:var(--purple)">★</div>
+                    <h3>Bonus: Multi-currency group pool</h3>
+                    <pre># 4 people, 4 countries, 4 currencies, one $200 USD goal
+curl -X POST http://localhost:8000/v1/fxpools/ \
+  -H "Content-Type: application/json" \
+  -d '{"goal_amount_usd":20000,"organizer_account_id":"69a268d595150878eaffa3ba","payee_account_id":"69a268d595150878eaffa3ba","description":"Global team","deadline":"2026-03-10T00:00:00Z","max_rate_drift_pct":3.0}'
+
+# Ravi contributes INR 41.00 (auto-converts to USD at live rate)
+curl -X POST http://localhost:8000/v1/fxpools/fxpool_ID/contribute \
+  -H "Content-Type: application/json" \
+  -d '{"payer_account_id":"69a268d595150878eaffa3bc","currency":"inr","amount_local":4100}'
+
+# Simulate rate drift → everyone gets auto-refunded in original currency
+curl -X POST http://localhost:8000/v1/fxpools/fxpool_ID/force-drift</pre>
+                    <div class="response">{ "status": "drift_refunded", "refunds": [{"currency": "inr",
+                        "amount_refunded": 4100}], "reason": "rate_drift_simulated" }</div>
+                </div>
+            </section>
+
+            <hr>
+
+            <!-- IDEMPOTENCY -->
+            <section id="idempotency">
+                <h2><span class="badge badge-orange">★</span> Idempotency (Stripe-Style)</h2>
+                <p>Send the same POST twice with the same <code>Idempotency-Key</code> header — get back the same
+                    response, no duplicate resource created. This is exactly how Stripe implements it.</p>
+                <pre># First call — creates the collect
+curl -X POST http://localhost:8000/v1/collects/ \
+  -H "Idempotency-Key: my-unique-key-123" \
+  -H "Content-Type: application/json" \
+  -d '{"payee_account_id":"69a268d595150878eaffa3ba","payer_account_id":"69a268d595150878eaffa3bc","amount":4900,"description":"Test","expires_at":"2026-03-10T00:00:00Z"}'
+
+# Second call — same response, no duplicate
+curl -X POST http://localhost:8000/v1/collects/ \
+  -H "Idempotency-Key: my-unique-key-123" \
+  -H "Content-Type: application/json" \
+  -d '{"payee_account_id":"69a268d595150878eaffa3ba","payer_account_id":"69a268d595150878eaffa3bc","amount":4900,"description":"Test","expires_at":"2026-03-10T00:00:00Z"}'</pre>
+                <p>The second response will have header <code>X-Idempotency-Replayed: true</code>.</p>
+            </section>
+
+            <hr>
+
+            <!-- ERRORS -->
+            <section id="errors">
+                <h2><span class="badge badge-red">!</span> Error Responses</h2>
+                <p>All errors follow a consistent shape with machine-readable codes:</p>
+                <div class="response" style="color:#ff7a95">{ "detail": { "error": { "type": "payment_error", "code":
+                    "insufficient_funds", "message": "Payer account balance is insufficient.", "param":
+                    "payer_account_id", "nessie_balance": 0, "required_amount": 4900 } } }</div>
+
+                <table class="endpoint-table" style="margin-top:1.25rem">
+                    <tr>
+                        <th>Status</th>
+                        <th>Code</th>
+                        <th>When it fires</th>
+                    </tr>
+                    <tr>
+                        <td>400</td>
+                        <td>invalid_status</td>
+                        <td>Approving a declined or expired collect</td>
+                    </tr>
+                    <tr>
+                        <td>402</td>
+                        <td>insufficient_funds</td>
+                        <td>Nessie balance too low for the operation</td>
+                    </tr>
+                    <tr>
+                        <td>404</td>
+                        <td>not_found</td>
+                        <td>Resource ID doesn't exist</td>
+                    </tr>
+                    <tr>
+                        <td>409</td>
+                        <td>already_funded</td>
+                        <td>Contributing to a pool that already hit its goal</td>
+                    </tr>
+                    <tr>
+                        <td>410</td>
+                        <td>collect_expired</td>
+                        <td>Approving a collect past its expiry date</td>
+                    </tr>
+                    <tr>
+                        <td>410</td>
+                        <td>rate_lock_expired</td>
+                        <td>Remitting a corridor after the 30-min lock</td>
+                    </tr>
+                    <tr>
+                        <td>422</td>
+                        <td>pool_expired</td>
+                        <td>Contributing to a pool past its deadline</td>
+                    </tr>
+                    <tr>
+                        <td>422</td>
+                        <td>rate_drift_exceeded</td>
+                        <td>FX moved beyond max_rate_drift_pct tolerance</td>
+                    </tr>
+                </table>
+            </section>
+
+            <hr>
+
+            <!-- ALL ENDPOINTS -->
+            <section id="endpoints">
+                <h2>All 16 Endpoints</h2>
+                <table class="endpoint-table">
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Method</th>
+                        <th>What it does</th>
+                    </tr>
+                    <tr>
+                        <td>/v1/health</td>
+                        <td class="method-get">GET</td>
+                        <td>Health check</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/collects</td>
+                        <td class="method-post">POST</td>
+                        <td>Create a pull payment request</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/collects</td>
+                        <td class="method-get">GET</td>
+                        <td>List (filter by payer/payee/status, paginate)</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/collects/{id}</td>
+                        <td class="method-get">GET</td>
+                        <td>Get a specific collect</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/collects/{id}/approve</td>
+                        <td class="method-post">POST</td>
+                        <td>Approve → Nessie transfer fires</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/collects/{id}/decline</td>
+                        <td class="method-post">POST</td>
+                        <td>Decline with optional reason</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/pools</td>
+                        <td class="method-post">POST</td>
+                        <td>Create a group collection pool</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/pools/{id}</td>
+                        <td class="method-get">GET</td>
+                        <td>Get pool status and progress</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/pools/{id}/contribute</td>
+                        <td class="method-post">POST</td>
+                        <td>Add contribution → auto-settles on goal</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/pools/{id}/cancel</td>
+                        <td class="method-post">POST</td>
+                        <td>Cancel → auto-refunds all contributors</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/pools/{id}/contributions</td>
+                        <td class="method-get">GET</td>
+                        <td>List individual contributions</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/corridors</td>
+                        <td class="method-post">POST</td>
+                        <td>Create FX corridor with rate lock</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/corridors/{id}/remit</td>
+                        <td class="method-post">POST</td>
+                        <td>Execute cross-border transfer</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/fxpools</td>
+                        <td class="method-post">POST</td>
+                        <td>Multi-currency group pool</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/fxpools/{id}/contribute</td>
+                        <td class="method-post">POST</td>
+                        <td>Contribute in any local currency</td>
+                    </tr>
+                    <tr>
+                        <td>/v1/analytics</td>
+                        <td class="method-get">GET</td>
+                        <td>Real-time platform metrics</td>
+                    </tr>
+                </table>
+                <div class="tip" style="margin-top:1.5rem">
+                    <p>All endpoints are also available interactively at <strong><a href="http://localhost:8000/docs"
+                                style="color:var(--blue)">localhost:8000/docs</a></strong> — click "Try it out" on any
+                        endpoint to test directly from the browser.</p>
+                </div>
+            </section>
+
+            <div style="height:4rem"></div>
+
+        </main>
+    </div>
+</body>
+
+</html>

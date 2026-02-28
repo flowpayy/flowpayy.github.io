@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowPay — The Pitch</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #03030A;
+            --bg2: #0C0C16;
+            --bg3: #13131F;
+            --border: #1E1E30;
+            --text: #EEEEF5;
+            --muted: #7777A0;
+            --blue: #4F7BFF;
+            --purple: #9B6DFF;
+            --green: #14E59A;
+            --red: #FF4D6A
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(3, 3, 10, .9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .875rem;
+            transition: color .2s
+        }
+
+        .nav-links a:hover {
+            color: var(--text)
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: #fff;
+            border: none;
+            padding: .5rem 1.25rem;
+            border-radius: 8px;
+            font-size: .875rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block
+        }
+
+        .sec {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 7rem 2rem
+        }
+
+        .eyebrow {
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--purple);
+            margin-bottom: 1rem
+        }
+
+        h1 {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 900;
+            letter-spacing: -.05em;
+            line-height: 1.0
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -.04em;
+            line-height: 1.15
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: .5rem
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.8
+        }
+
+        p strong {
+            color: var(--text)
+        }
+
+        .grad {
+            background: linear-gradient(135deg, #4F7BFF 0%, #9B6DFF 50%, #14E59A 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(79, 123, 255, .12) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 60%, rgba(155, 109, 255, .08) 0%, transparent 60%);
+            pointer-events: none
+        }
+
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--muted);
+            max-width: 620px;
+            margin: 1.5rem auto;
+            line-height: 1.75
+        }
+
+        .pills {
+            display: flex;
+            gap: .6rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1.25rem
+        }
+
+        .pill {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: .3rem .85rem;
+            font-size: .72rem;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        hr.d {
+            border: none;
+            border-top: 1px solid var(--border)
+        }
+
+        .grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem
+        }
+
+        .grid3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem
+        }
+
+        .grid4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem
+        }
+
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem
+        }
+
+        .card-r {
+            background: rgba(255, 77, 106, .04);
+            border: 1px solid rgba(255, 77, 106, .2);
+            border-radius: 14px;
+            padding: 1.75rem
+        }
+
+        .card-b {
+            background: rgba(79, 123, 255, .06);
+            border: 1px solid rgba(79, 123, 255, .25);
+            border-radius: 14px;
+            padding: 1.75rem
+        }
+
+        .card-p {
+            background: var(--bg2);
+            border: 1px solid rgba(155, 109, 255, .25);
+            border-radius: 14px;
+            padding: 1.75rem
+        }
+
+        .tag {
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            margin-bottom: .4rem
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            border-radius: 6px;
+            padding: .65rem 1rem;
+            margin-top: 1.25rem
+        }
+
+        .mono-b {
+            background: rgba(79, 123, 255, .07);
+            color: var(--blue)
+        }
+
+        .mono-g {
+            background: rgba(20, 229, 154, .05);
+            color: var(--green)
+        }
+
+        .mono-p {
+            background: rgba(155, 109, 255, .06);
+            color: var(--purple)
+        }
+
+        .check-list div {
+            display: flex;
+            align-items: flex-start;
+            gap: .65rem;
+            margin: .6rem 0;
+            font-size: .9rem;
+            color: var(--muted)
+        }
+
+        .check-list div strong {
+            color: var(--text)
+        }
+
+        .num-big {
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: -.04em;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .quote-blk {
+            background: linear-gradient(135deg, rgba(79, 123, 255, .08), rgba(155, 109, 255, .08));
+            border: 1px solid rgba(79, 123, 255, .25);
+            border-radius: 14px;
+            padding: 2.5rem;
+            text-align: center;
+            margin: 3rem 0
+        }
+
+        .quote-blk p {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.55;
+            font-style: italic
+        }
+
+        .flow-box {
+            display: inline-block;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .5rem 1rem;
+            font-size: .75rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--muted)
+        }
+
+        .flow-box.b {
+            border-color: var(--blue);
+            color: var(--blue)
+        }
+
+        .flow-box.g {
+            border-color: var(--green);
+            color: var(--green)
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            margin: .6rem 0;
+            flex-wrap: wrap
+        }
+
+        .arr {
+            color: var(--muted)
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--border)
+        }
+
+        @media(max-width:768px) {
+
+            .grid2,
+            .grid3,
+            .grid4 {
+                grid-template-columns: 1fr
+            }
+
+            .nav-links {
+                display: none
+            }
+
+            nav {
+                padding: 1rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <span class="logo">⚡ FlowPay</span>
+        <div class="nav-links">
+            <a href="#problem">Problem</a>
+            <a href="#solution">Primitives</a>
+            <a href="#nessie">Nessie</a>
+            <a href="#stripe">For Stripe</a>
+        </div>
+        <a href="judge-guide.html" class="btn">Judge Guide →</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="eyebrow"
+            style="color:var(--blue);border:1px solid rgba(79,123,255,.25);border-radius:999px;padding:.35rem 1.1rem;display:inline-block;margin-bottom:2rem">
+            HackIllinois 2026 · Stripe Track · Capital One Nessie Prize</div>
+        <h1>The payment primitives<br><span class="grad">Stripe doesn't have.</span></h1>
+        <p class="hero-sub">Stripe launched in 2010 with 7 lines for a card charge. The world moved on. <strong>A
+                billion people in Asia use pull payments and group collection every day. No Western API exposes them.
+                Until now.</strong></p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem">
+            <a href="http://localhost:8000/docs" class="btn">Try the API →</a>
+            <a href="judge-guide.html" class="btn" style="background:var(--bg3);border:1px solid var(--border)">Judge
+                Guide</a>
+        </div>
+        <div class="pills" style="margin-top:2rem">
+            <span class="pill">POST /v1/collects</span>
+            <span class="pill">POST /v1/pools</span>
+            <span class="pill">POST /v1/corridors</span>
+            <span class="pill">POST /v1/fxpools</span>
+            <span class="pill">Idempotency-Key</span>
+            <span class="pill">Webhook Events</span>
+            <span class="pill">Live FX Rates</span>
+        </div>
+    </section>
+
+    <hr class="d">
+
+    <!-- PROBLEM -->
+    <section class="sec" id="problem">
+        <div class="eyebrow">Chapter 1 — The Problem</div>
+        <h2>Ask your group chat how<br>they split the dinner bill.</h2>
+        <p style="max-width:600px;margin-top:1.25rem">One person Venmos everyone. Some ignore it. The host chases for
+            three days. Two people never pay. This is not a social problem — it's a <strong>payment infrastructure
+                failure</strong>. The API for group collection does not exist in the West. Stripe, PayPal, Braintree —
+            none of them expose it.</p>
+
+        <div class="grid2" style="margin-top:2.5rem">
+            <div class="card-r">
+                <div class="tag" style="color:var(--red)">What Western APIs Can Do Today</div>
+                <div class="check-list" style="margin-top:.75rem">
+                    <div><span>❌</span><span>Push-only. You send money. No receiver-initiated request.</span></div>
+                    <div><span>❌</span><span>One-to-one. No group goal. No deadline. No auto-refund.</span></div>
+                    <div><span>❌</span><span>FX is opaque. No rate locking. No programmable corridor.</span></div>
+                    <div><span>❌</span><span>Every dev rebuilds this state machine from scratch, every time.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-b">
+                <div class="tag" style="color:var(--blue)">How Asia Solved This a Decade Ago</div>
+                <div class="check-list" style="margin-top:.75rem">
+                    <div><span>✅</span><span><strong>UPI Collect:</strong> payee requests, payer approves. 10B
+                            txns/month.</span></div>
+                    <div><span>✅</span><span><strong>Alipay AA Split:</strong> group collection, auto-refund. Used
+                            daily.</span></div>
+                    <div><span>✅</span><span><strong>UPI Cross-Border:</strong> linking India, UAE, Singapore, France
+                            now.</span></div>
+                    <div><span>✅</span><span>All exposed as a developer API. One call to create. Webhooks.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="d">
+
+    <!-- SOLUTION -->
+    <section class="sec" id="solution">
+        <div class="eyebrow">Chapter 2 — Three Primitives</div>
+        <h2>One API. Three missing<br>payment building blocks.</h2>
+        <div class="grid3" style="margin-top:2.5rem">
+            <div class="card">
+                <div class="tag" style="color:var(--blue)">Primitive 1 — Collect</div>
+                <h3>📥 Pull Payment Request</h3>
+                <p>Payee sends a request. Payer approves or declines from their inbox. Money moves on explicit payer
+                    action. Inspired by UPI Collect — 10 billion transactions a month in India.</p>
+                <div class="mono mono-b">POST /v1/collects<br>POST /v1/collects/{id}/approve<br>POST
+                    /v1/collects/{id}/decline</div>
+            </div>
+            <div class="card">
+                <div class="tag" style="color:var(--green)">Primitive 2 — Pool</div>
+                <h3>🏊 Group Collection</h3>
+                <p>Set a goal + deadline. Contributors pay in. When goal hit — auto-settle to organizer. If deadline
+                    passes — auto-refund everyone individually. Zero manual work.</p>
+                <div class="mono mono-g">POST /v1/pools<br>POST /v1/pools/{id}/contribute<br>POST /v1/pools/{id}/cancel
+                </div>
+            </div>
+            <div class="card-p">
+                <div class="tag" style="color:var(--purple)">Primitive 3 — FlowBridge</div>
+                <h3>🌏 FX Corridors</h3>
+                <p>Cross-border payments with rate-locked corridors. Lock live INR→USD for 30 min. If rate drifts &gt;2%
+                    — auto-cancel. Multi-currency pools where each person pays in their local currency.</p>
+                <div class="mono mono-p">POST /v1/corridors<br>POST /v1/corridors/{id}/remit<br>POST /v1/fxpools</div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="d">
+
+    <!-- NESSIE -->
+    <section class="sec" id="nessie">
+        <div class="eyebrow">Chapter 3 — Capital One Nessie</div>
+        <h2>Every dollar that moves<br>is a real Nessie call.</h2>
+        <p style="max-width:600px;margin-top:1rem">Not mocked. Not simulated. When you approve a Collect, a real Nessie
+            <code
+                style="font-family:'JetBrains Mono',monospace;font-size:.85rem;background:var(--bg3);padding:.15rem .4rem;border-radius:4px">POST /transfers</code>
+            fires and you get a real transfer ID back. When a Pool cancels, reverse transfers issue to every
+            contributor.</p>
+        <div class="card" style="margin-top:2rem;padding:2rem">
+            <div class="tag" style="color:var(--muted)">Collect Approve → Nessie Transfer</div>
+            <div class="flow-row" style="margin-top:1rem">
+                <span class="flow-box b">POST /collects/{id}/approve</span>
+                <span class="arr">→</span>
+                <span class="flow-box">Validate expiry + status</span>
+                <span class="arr">→</span>
+                <span class="flow-box">GET Nessie balance</span>
+                <span class="arr">→</span>
+                <span class="flow-box g">POST Nessie /transfers ✓</span>
+                <span class="arr">→</span>
+                <span class="flow-box g">collect.approved webhook</span>
+            </div>
+            <div class="tag" style="color:var(--muted);margin-top:1.5rem">FlowBridge Corridor → FX Transfer</div>
+            <div class="flow-row" style="margin-top:1rem">
+                <span class="flow-box b">POST /corridors</span>
+                <span class="arr">→</span>
+                <span class="flow-box">Live FX rate fetch</span>
+                <span class="arr">→</span>
+                <span class="flow-box">Rate locked 30 min</span>
+            </div>
+            <div class="flow-row">
+                <span class="flow-box b">POST /corridors/{id}/remit</span>
+                <span class="arr">→</span>
+                <span class="flow-box">Check drift &lt; 2%</span>
+                <span class="arr">→</span>
+                <span class="flow-box g">Nessie transfer ✓</span>
+                <span class="arr">→</span>
+                <span class="flow-box g">corridor.settled webhook</span>
+            </div>
+        </div>
+    </section>
+
+    <hr class="d">
+
+    <!-- WHY STRIPE -->
+    <section class="sec" id="stripe">
+        <div class="eyebrow">Chapter 4 — For Stripe</div>
+        <h2>FlowPay is not competition.<br>It's the next chapter.</h2>
+        <div class="grid4" style="margin-top:2.5rem">
+            <div class="card" style="text-align:center">
+                <div class="num-big">$1T+</div>
+                <p style="font-size:.82rem;margin-top:.5rem">annual group payment volume with no Stripe primitive</p>
+            </div>
+            <div class="card" style="text-align:center">
+                <div class="num-big">16</div>
+                <p style="font-size:.82rem;margin-top:.5rem">live API endpoints with pagination, filtering, idempotency
+                </p>
+            </div>
+            <div class="card" style="text-align:center">
+                <div class="num-big">0.5%</div>
+                <p style="font-size:.82rem;margin-top:.5rem">per settlement — same model as Stripe, layered on top</p>
+            </div>
+            <div class="card" style="text-align:center">
+                <div class="num-big">80h</div>
+                <p style="font-size:.82rem;margin-top:.5rem">developer hours saved per app needing these patterns</p>
+            </div>
+        </div>
+        <div class="quote-blk">
+            <p>"Stripe's goal is to increase the GDP of the internet. FlowPay shares that goal — we just need three new
+                primitives added to the palette."</p>
+        </div>
+        <div class="grid2">
+            <div class="card">
+                <h3>The Stripe Collect</h3>
+                <p style="margin-top:.5rem">Stripe Invoices are email-based, not API-native. No payer inbox. No
+                    approve/decline event. No webhook per decision. FlowPay's Collect is what Stripe Invoices should
+                    have always been.</p>
+            </div>
+            <div class="card">
+                <h3>The Stripe Pool</h3>
+                <p style="margin-top:.5rem">Stripe Connect handles marketplaces but not shared-goal group collection
+                    with failure modes. Every group-payments app rebuilds this from scratch. FlowPay makes it two API
+                    calls.</p>
+            </div>
+            <div class="card">
+                <h3>The Stripe Corridor</h3>
+                <p style="margin-top:.5rem">Stripe processes 135 currencies but exposes zero FX rate locking or corridor
+                    primitives. Wise has this for consumers. No API exposes it to developers. FlowBridge is that API.
+                </p>
+            </div>
+            <div class="card">
+                <h3>The Business Case</h3>
+                <p style="margin-top:.5rem">0.5% per settled Collect, Pool, and Corridor. These flows already live on
+                    Stripe — they're just built manually by every developer. FlowPay captures the fee that today falls
+                    through the cracks.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div style="font-size:1.75rem;font-weight:900;margin-bottom:.5rem">⚡ FlowPay</div>
+        <p style="max-width:460px;margin:.5rem auto 1.5rem">The primitives a billion people use daily, exposed as a
+            clean developer API.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+            <a href="http://localhost:8000/docs" class="btn">Interactive API Docs →</a>
+            <a href="judge-guide.html" class="btn" style="background:var(--bg3);border:1px solid var(--border)">Judge
+                Quick-Start →</a>
+        </div>
+    </footer>
+
+</body>
+
+</html>

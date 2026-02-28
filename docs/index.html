@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowPay — The Payment Primitive Stripe Doesn't Have</title>
+<meta name="description" content="FlowPay exposes two payment primitives missing from every Western API: pull payments and group collection. Built on Capital One Nessie for HackIllinois 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --bg2: #0E0E12;
+    --bg3: #16161C;
+    --border: #22222A;
+    --text: #F2F2F5;
+    --muted: #8888A2;
+    --blue: #4F7BFF;
+    --blue-dim: rgba(79,123,255,0.12);
+    --green: #14E59A;
+    --green-dim: rgba(20,229,154,0.1);
+    --purple: #9B6DFF;
+    --orange: #FF8A3D;
+    --red: #FF4D6A;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(5,5,7,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { background: var(--blue); color: white; padding: .4rem 1rem; border-radius: 6px; font-size: .875rem; font-weight: 500; text-decoration: none; transition: opacity .2s; }
+  .nav-cta:hover { opacity: .85; }
+
+  /* HERO */
+  .hero { max-width: 900px; margin: 0 auto; padding: 7rem 2rem 5rem; text-align: center; }
+  .hero-badge { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid var(--border); border-radius: 999px; padding: .35rem 1rem; font-size: .75rem; color: var(--muted); margin-bottom: 2rem; }
+  .hero-badge span { color: var(--blue); font-weight: 600; }
+  h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; }
+  .gradient-text { background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 50%, var(--green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-sub { font-size: 1.2rem; color: var(--muted); max-width: 600px; margin: 1.5rem auto 2.5rem; }
+  .hero-badges { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .badge-tag { border: 1px solid var(--border); border-radius: 6px; padding: .4rem .8rem; font-size: .75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* SECTIONS */
+  section { max-width: 1080px; margin: 0 auto; padding: 5rem 2rem; }
+  .section-label { font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); margin-bottom: .75rem; }
+  h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800; letter-spacing: -0.03em; }
+  h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: .5rem; }
+  p { color: var(--muted); line-height: 1.75; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* PROBLEM */
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+  .problem-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .problem-card.highlight { border-color: rgba(255,77,106,.3); background: rgba(255,77,106,.04); }
+  .problem-card .icon { font-size: 1.5rem; margin-bottom: .75rem; }
+
+  /* PRIMITIVES */
+  .primitives { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+  .primitive { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; position: relative; overflow: hidden; }
+  .primitive::before { content: ''; position: absolute; inset: 0; opacity: 0.04; }
+  .primitive.collect::before { background: var(--blue); }
+  .primitive.pool::before { background: var(--green); }
+  .primitive-number { font-size: 3rem; font-weight: 800; opacity: .08; position: absolute; top: 1rem; right: 1.5rem; line-height: 1; }
+  .primitive-label { font-size: .75rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
+  .primitive.collect .primitive-label { color: var(--blue); }
+  .primitive.pool .primitive-label { color: var(--green); }
+  .state-machine { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+  .state { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: .25rem .65rem; font-size: .75rem; font-family: 'JetBrains Mono', monospace; }
+  .state.initial { color: var(--orange); border-color: rgba(255,138,61,.3); }
+  .state.success { color: var(--green); border-color: rgba(20,229,154,.3); }
+  .state.fail { color: var(--red); border-color: rgba(255,77,106,.3); }
+  .arrow { color: var(--muted); font-size: .75rem; }
+
+  /* API */
+  .endpoints { display: flex; flex-direction: column; gap: .75rem; margin-top: 2rem; }
+  .endpoint { display: grid; grid-template-columns: 80px 1fr auto; align-items: center; gap: 1rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: .75rem 1rem; transition: border-color .2s; }
+  .endpoint:hover { border-color: #333342; }
+  .method { font-size: .7rem; font-weight: 700; letter-spacing: .05em; font-family: 'JetBrains Mono', monospace; padding: .2rem .5rem; border-radius: 4px; text-align: center; }
+  .method.post { background: rgba(79,123,255,.15); color: var(--blue); }
+  .method.get { background: rgba(20,229,154,.12); color: var(--green); }
+  .endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: .85rem; }
+  .endpoint-desc { font-size: .8rem; color: var(--muted); text-align: right; }
+
+  /* CODE BLOCK */
+  .code-tabs { margin-top: 2rem; }
+  .tab-bar { display: flex; gap: .25rem; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+  .tab { padding: .5rem 1rem; font-size: .8rem; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .2s; }
+  .tab.active { color: var(--text); border-bottom-color: var(--blue); }
+  .code-block { background: #0A0A0D; border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: .8rem; overflow-x: auto; }
+  .code-block code { display: block; white-space: pre; }
+  .kw { color: var(--purple); }
+  .str { color: var(--green); }
+  .num { color: var(--orange); }
+  .cm { color: #555570; }
+  .key { color: var(--blue); }
+
+  /* NESSIE */
+  .flow-diagram { display: flex; flex-direction: column; gap: 0; margin: 3rem 0; }
+  .flow-step { display: flex; gap: 1.5rem; align-items: flex-start; }
+  .flow-line { display: flex; flex-direction: column; align-items: center; }
+  .flow-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; flex-shrink: 0; }
+  .flow-dot.blue { background: var(--blue-dim); border: 1px solid var(--blue); color: var(--blue); }
+  .flow-dot.green { background: var(--green-dim); border: 1px solid var(--green); color: var(--green); }
+  .flow-connector { width: 1px; background: var(--border); flex: 1; min-height: 32px; margin: 4px 0; }
+  .flow-content { padding: .2rem 0 2rem; }
+  .flow-content h4 { font-size: .875rem; font-weight: 600; margin-bottom: .25rem; }
+  .flow-content p { font-size: .8rem; }
+
+  /* STRIPE SECTION */
+  .stripe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .stripe-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .stripe-card .tag { font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); margin-bottom: .75rem; }
+  .metric { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  /* ERRORS */
+  .error-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+  .error-item { background: var(--bg2); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; }
+  .error-code { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--red); margin-bottom: .25rem; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: .875rem; }
+  footer strong { color: var(--text); }
+
+  @media (max-width: 768px) {
+    .problem-grid, .primitives, .stripe-grid { grid-template-columns: 1fr; }
+    .endpoint { grid-template-columns: 70px 1fr; }
+    .endpoint-desc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">⚡ FlowPay</span>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#primitives">Primitives</a>
+    <a href="#api">API Reference</a>
+    <a href="#nessie">Nessie</a>
+    <a href="#stripe">For Stripe</a>
+  </div>
+  <a href="http://localhost:8000/docs" target="_blank" class="nav-cta">Try API →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Built at <span>HackIllinois 2026</span> · Stripe Track · Capital One Nessie</div>
+  <h1>The Payment Primitives<br><span class="gradient-text">Stripe Doesn't Have</span></h1>
+  <p class="hero-sub">A billion people in India and China use pull payments and group collection every day. No Western payment API exposes them. <strong style="color:var(--text)">FlowPay does.</strong></p>
+  <div class="hero-badges">
+    <span class="badge-tag">POST /v1/collects</span>
+    <span class="badge-tag">POST /v1/pools</span>
+    <span class="badge-tag">Webhook Events</span>
+    <span class="badge-tag">Capital One Nessie</span>
+    <span class="badge-tag">FastAPI · Python</span>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- THE PROBLEM -->
+<section id="problem">
+  <p class="section-label">The Problem</p>
+  <h2>Stripe's model is push-only.<br>The world isn't.</h2>
+  <div class="problem-grid">
+    <div class="problem-card highlight">
+      <div class="icon">⛔</div>
+      <h3>No Pull Payments</h3>
+      <p>Stripe's model: you charge a card, money moves. There is zero primitive for "receiver requests, payer approves." UPI has had this since 2016. Every Splitwise, every freelancer platform — they all kludge this on top of emails and Venmo.</p>
+    </div>
+    <div class="problem-card highlight">
+      <div class="icon">⛔</div>
+      <h3>No Group Collection</h3>
+      <p>There is no Stripe primitive for "collect from N people, only settle if all pay, auto-refund if deadline passes." Alipay calls this AA Split. WeChat calls it Red Envelope. Tens of billions of dollars flow through these patterns monthly. Stripe has nothing.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🔁</div>
+      <h3>Developers Reinvent This Every Time</h3>
+      <p>Every group-payment app, every subscription-lite product, every rent-collection tool starts from scratch. They all build state machines, balance checks, refund loops, and webhook dispatchers — on top of raw Stripe payouts. FlowPay is that layer, done once, done right.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🌏</div>
+      <h3>The Asia Gap</h3>
+      <p>WeChat Pay processes 1B+ daily transactions. UPI moves ₹18 trillion/month. Both are built on these primitives. Western payment APIs haven't caught up. As global fintech converges, this gap costs developers weeks of build time and Stripe real market share.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- PRIMITIVES -->
+<section id="primitives">
+  <p class="section-label">The Solution</p>
+  <h2>Two primitives.<br>One coherent API.</h2>
+  <div class="primitives">
+    <div class="primitive collect">
+      <span class="primitive-number">01</span>
+      <div class="primitive-label">Primitive 1 · Collect</div>
+      <h3>Pull Payment Request</h3>
+      <p>A payee sends a payment request. The payer sees it in their programmable inbox and approves or declines. Money moves only on explicit approval. Inspired by UPI Collect.</p>
+      <div class="state-machine">
+        <span class="state initial">pending</span>
+        <span class="arrow">→</span>
+        <span class="state success">approved</span>
+        <span class="arrow">|</span>
+        <span class="state fail">declined</span>
+        <span class="arrow">|</span>
+        <span class="state fail">expired</span>
+      </div>
+    </div>
+    <div class="primitive pool">
+      <span class="primitive-number">02</span>
+      <div class="primitive-label">Primitive 2 · Pool</div>
+      <h3>Group Collection</h3>
+      <p>Collect from N participants toward a goal amount. Settle only when funded. Auto-refund everyone if the deadline passes unfulfilled. Inspired by Alipay AA Split + WeChat Hongbao.</p>
+      <div class="state-machine">
+        <span class="state initial">collecting</span>
+        <span class="arrow">→</span>
+        <span class="state success">funded</span>
+        <span class="arrow">|</span>
+        <span class="state fail">expired</span>
+        <span class="arrow">|</span>
+        <span class="state fail">cancelled</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:3rem">
+    <h3 style="margin-bottom:1rem;font-size:1.25rem">Real-world use cases enabled immediately</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
+        <p style="font-size:.75rem;color:var(--blue);font-weight:600;margin-bottom:.5rem">COLLECT</p>
+        <p style="font-size:.875rem;color:var(--text);margin-bottom:.25rem">Freelancer invoice approval</p>
+        <p style="font-size:.8rem">Designer sends $490 collect. Client clicks approve in their inbox. No chasing invoices.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
+        <p style="font-size:.75rem;color:var(--blue);font-weight:600;margin-bottom:.5rem">COLLECT</p>
+        <p style="font-size:.875rem;color:var(--text);margin-bottom:.25rem">Pre-approved subscription pull</p>
+        <p style="font-size:.8rem">User pre-authorizes recurring collects. SaaS pulls monthly. No cards on file.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
+        <p style="font-size:.75rem;color:var(--green);font-weight:600;margin-bottom:.5rem">POOL</p>
+        <p style="font-size:.875rem;color:var(--text);margin-bottom:.25rem">Group gift with auto-refund</p>
+        <p style="font-size:.8rem">8 friends chip in $25. If the 8th bails, everyone gets back automatically.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.25rem">
+        <p style="font-size:.75rem;color:var(--green);font-weight:600;margin-bottom:.5rem">POOL</p>
+        <p style="font-size:.875rem;color:var(--text);margin-bottom:.25rem">Event ticketing guarantee</p>
+        <p style="font-size:.8rem">10 friends buying concert tickets. Pool only charges if all 10 confirm. Otherwise auto-refund.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- API REFERENCE -->
+<section id="api">
+  <p class="section-label">API Reference</p>
+  <h2>Designed to feel like Stripe.<br>Built to do what Stripe can't.</h2>
+
+  <div class="endpoints">
+    <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/v1/collects</span><span class="endpoint-desc">Create a pull payment request</span></div>
+    <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/v1/collects/{id}</span><span class="endpoint-desc">Retrieve a collect by ID</span></div>
+    <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/v1/collects/{id}/approve</span><span class="endpoint-desc">Payer approves → Nessie transfer fires</span></div>
+    <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/v1/collects/{id}/decline</span><span class="endpoint-desc">Payer declines with optional reason</span></div>
+    <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/v1/collects?payer_id=x</span><span class="endpoint-desc">Payer's programmable inbox</span></div>
+    <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/v1/pools</span><span class="endpoint-desc">Create a group collection</span></div>
+    <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/v1/pools/{id}</span><span class="endpoint-desc">Pool status, progress, participants</span></div>
+    <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/v1/pools/{id}/contribute</span><span class="endpoint-desc">Participant adds their share</span></div>
+    <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/v1/pools/{id}/cancel</span><span class="endpoint-desc">Cancel pool → auto-refund all contributors</span></div>
+    <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/v1/webhooks</span><span class="endpoint-desc">Register a webhook URL</span></div>
+    <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/v1/health</span><span class="endpoint-desc">API health check</span></div>
+  </div>
+
+  <div class="code-tabs" style="margin-top:3rem">
+    <div class="tab-bar">
+      <div class="tab active">Create Collect</div>
+      <div class="tab">Approve Response</div>
+      <div class="tab">Pool Object</div>
+      <div class="tab">Error Handling</div>
+    </div>
+    <div class="code-block">
+<code><span class="cm">// POST /v1/collects — Alex (freelancer) requests $49 from Jordan (client)</span>
+<span class="cm">// This is RECEIVER-INITIATED. Stripe has no equivalent.</span>
+
+<span class="kw">const</span> collect = <span class="kw">await</span> flowpay.collects.create({
+  <span class="key">payee_account_id</span>: <span class="str">"nessie_acc_alex"</span>,   <span class="cm">// Alex receives</span>
+  <span class="key">payer_account_id</span>: <span class="str">"nessie_acc_jordan"</span>, <span class="cm">// Jordan approves</span>
+  <span class="key">amount</span>:            <span class="num">4900</span>,               <span class="cm">// $49.00 in cents</span>
+  <span class="key">currency</span>:          <span class="str">"usd"</span>,
+  <span class="key">description</span>:       <span class="str">"Logo design — Phase 1"</span>,
+  <span class="key">expires_at</span>:        <span class="str">"2026-03-05T00:00:00Z"</span>,
+  <span class="key">metadata</span>: { <span class="key">invoice_id</span>: <span class="str">"inv_789"</span> }
+});
+
+<span class="cm">// Response: collect.status === "pending"</span>
+<span class="cm">// Jordan sees this in GET /v1/collects?payer_id=jordan</span>
+<span class="cm">// Jordan approves → POST /v1/collects/{id}/approve → Nessie transfer fires</span>
+<span class="cm">// Webhook: collect.approved fires to your registered URL</span></code>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem">
+    <h3 style="margin-bottom:1.5rem">Production-Grade Error Handling</h3>
+    <div class="error-list">
+      <div class="error-item">
+        <div class="error-code">402 — payment_error / insufficient_funds</div>
+        <p style="font-size:.8rem">Real-time Nessie balance check before transfer. Returns exact balance and required amount for your UI.</p>
+      </div>
+      <div class="error-item">
+        <div class="error-code">410 — invalid_request_error / collect_expired</div>
+        <p style="font-size:.8rem">Collect auto-expired before approval. Includes exact expired_at timestamp. Create a new request.</p>
+      </div>
+      <div class="error-item">
+        <div class="error-code">409 — invalid_request_error / pool_already_funded</div>
+        <p style="font-size:.8rem">Pool reached its goal and settled. No further contributions accepted. Status is terminal.</p>
+      </div>
+      <div class="error-item">
+        <div class="error-code">422 — pool_error / pool_expired_unfunded</div>
+        <p style="font-size:.8rem">Deadline passed without reaching goal. Includes refund count and all refund Nessie transfer IDs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- NESSIE INTEGRATION -->
+<section id="nessie">
+  <p class="section-label">Capital One Nessie</p>
+  <h2>FlowPay is the logic layer.<br>Nessie is the road.</h2>
+  <p style="max-width:640px;margin-top:1rem">Every money movement inside FlowPay maps directly to a Capital One Nessie API call. The integration is genuine — not decorative. When a payer approves a Collect, a real Nessie transfer occurs. When a Pool fails, a real Nessie reverse transfer refunds every contributor.</p>
+
+  <div class="flow-diagram">
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot blue">1</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><h4>Developer calls FlowPay</h4><p><code style="font-family:JetBrains Mono;color:var(--blue);background:var(--bg3);padding:.1rem .4rem;border-radius:4px">POST /v1/collects/{id}/approve</code></p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot blue">2</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><h4>FlowPay validates state + expiry</h4><p>Checks collect is still <code style="font-family:JetBrains Mono;color:var(--orange);font-size:.8rem">pending</code> and has not expired.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot blue">3</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><h4>FlowPay checks Nessie balance</h4><p><code style="font-family:JetBrains Mono;color:var(--blue);background:var(--bg3);padding:.1rem .4rem;border-radius:4px">GET /accounts/{payer_id}</code> — validates sufficient funds before moving money.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot green">4</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><h4>Nessie transfer executes</h4><p><code style="font-family:JetBrains Mono;color:var(--green);background:var(--bg3);padding:.1rem .4rem;border-radius:4px">POST /accounts/{payer_id}/transfers</code> — real money moves between accounts.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot green">5</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><h4>FlowPay updates collect object</h4><p>Status → <code style="font-family:JetBrains Mono;color:var(--green);font-size:.8rem">approved</code>, <code style="font-family:JetBrains Mono;font-size:.8rem">nessie_transfer_id</code> populated, <code style="font-family:JetBrains Mono;font-size:.8rem">approved_at</code> set.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot green">6</div></div>
+      <div class="flow-content"><h4>Webhook fires to developer</h4><p>Event <code style="font-family:JetBrains Mono;color:var(--purple);background:var(--bg3);padding:.1rem .4rem;border-radius:4px">collect.approved</code> POSTed to registered URL with full collect object and Nessie transaction ID.</p></div>
+    </div>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-top:2rem">
+    <h3 style="margin-bottom:1.5rem">Nessie Endpoints Used</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div><p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--blue);margin-bottom:.25rem">POST /customers</p><p style="font-size:.8rem">Create payer/payee accounts for demo seeding</p></div>
+      <div><p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--blue);margin-bottom:.25rem">POST /customers/{id}/accounts</p><p style="font-size:.8rem">Create checking accounts. Returns account_id used in all transfers.</p></div>
+      <div><p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--green);margin-bottom:.25rem">POST /accounts/{id}/transfers ⭐</p><p style="font-size:.8rem">THE CORE CALL. Every flowed dollar is a real Nessie transfer.</p></div>
+      <div><p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--blue);margin-bottom:.25rem">POST /accounts/{id}/deposits</p><p style="font-size:.8rem">Seed demo accounts with starting balance for the showcase.</p></div>
+      <div><p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--blue);margin-bottom:.25rem">GET /accounts/{id}</p><p style="font-size:.8rem">Balance check before every transfer to validate payer funds.</p></div>
+      <div><p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--orange);margin-bottom:.25rem">Reverse transfers (Refunds)</p><p style="font-size:.8rem">Pool cancellation / expiry: each contributor gets a reverse Nessie transfer back to their account.</p></div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- FOR STRIPE -->
+<section id="stripe">
+  <p class="section-label">Why This Matters For Stripe</p>
+  <h2>FlowPay isn't a competitor.<br>It's a feature Stripe should ship.</h2>
+  <p style="max-width:680px;margin-top:1rem">The primitives FlowPay exposes are the missing layer between Stripe's current charge API and the group-payment era of commerce. Here is the business case for why Stripe should acquire or implement them.</p>
+
+  <div class="stripe-grid">
+    <div class="stripe-card">
+      <div class="tag">The Market Gap</div>
+      <div class="metric">$1T+</div>
+      <h3 style="margin-top:.5rem;margin-bottom:.5rem">Group payments annually</h3>
+      <p>Rent splits, group gifts, event ticketing, B2B invoice approval. Every one of these is built on Stripe's primitives today — but clumsily, without the right abstractions.</p>
+    </div>
+    <div class="stripe-card">
+      <div class="tag">Developer Savings</div>
+      <div class="metric">~80hrs</div>
+      <h3 style="margin-top:.5rem;margin-bottom:.5rem">Per implementation</h3>
+      <p>State machines, expiry logic, refund loops, balance checks, webhook retry — developers build this from scratch every time. FlowPay eliminates all of it with two endpoints.</p>
+    </div>
+    <div class="stripe-card">
+      <div class="tag">Business Model</div>
+      <div class="metric">0.5%</div>
+      <h3 style="margin-top:.5rem;margin-bottom:.5rem">Per settled transaction</h3>
+      <p>Same model as Stripe: basis points per settlement. FlowPay takes a thin layer on top of every collect and pool that settles. Refunds are free — trust is the product.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:3rem;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:2rem">
+    <h3 style="margin-bottom:1.5rem">Frequently Asked (Stripe Judge Edition)</h3>
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
+      <div style="padding-bottom:1.5rem;border-bottom:1px solid var(--border)">
+        <p style="font-weight:600;color:var(--text);margin-bottom:.5rem">Why not just use Stripe Invoices?</p>
+        <p>Invoices are email-based and one-to-one. Collect is an API primitive — it lives in a payer's programmable inbox, can be approved by code, triggers webhooks, and supports expiry, decline reasons, and metadata. Completely different abstraction.</p>
+      </div>
+      <div style="padding-bottom:1.5rem;border-bottom:1px solid var(--border)">
+        <p style="font-weight:600;color:var(--text);margin-bottom:.5rem">Why does a pool need to fail gracefully?</p>
+        <p>Because group payments fail all the time — someone doesn't pay, someone cancels at the last minute. If the platform doesn't handle this, developers build it. That's the entire point of FlowPay: we handle the failure modes so they don't have to.</p>
+      </div>
+      <div>
+        <p style="font-weight:600;color:var(--text);margin-bottom:.5rem">What happens when Nessie is unavailable?</p>
+        <p>FlowPay queues the transfer with exponential backoff retry. Collect status remains <code style="font-family:JetBrains Mono;color:var(--orange);font-size:.85rem">pending_transfer</code> until the banking layer responds. Webhook fires once settled. Standard distributed systems fault tolerance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- WEBHOOK EVENTS -->
+<section>
+  <p class="section-label">Webhook Events</p>
+  <h2>Event-driven from the start.<br>No polling loops required.</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--blue);margin-bottom:.25rem">collect.created</p>
+      <p style="font-size:.8rem">Payer notified: new collect in their inbox awaiting approval.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--green);margin-bottom:.25rem">collect.approved</p>
+      <p style="font-size:.8rem">Payee notified: payment approved. Nessie transfer ID included.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--red);margin-bottom:.25rem">collect.declined</p>
+      <p style="font-size:.8rem">Payee notified: declined with optional reason string.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--orange);margin-bottom:.25rem">collect.expired</p>
+      <p style="font-size:.8rem">Both parties notified: collect expired without action.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--blue);margin-bottom:.25rem">pool.contribution_received</p>
+      <p style="font-size:.8rem">Organizer notified after each contribution. Includes running total.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--green);margin-bottom:.25rem">pool.goal_reached</p>
+      <p style="font-size:.8rem">All parties notified: pool funded. Nessie settlement transfer fired.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--red);margin-bottom:.25rem">pool.expired_refunded</p>
+      <p style="font-size:.8rem">All parties notified: deadline passed. All refund transfer IDs included.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem">
+      <p style="font-family:JetBrains Mono;font-size:.8rem;color:var(--orange);margin-bottom:.25rem">pool.cancelled</p>
+      <p style="font-size:.8rem">Organizer cancelled. All contributors refunded via Nessie reverse transfers.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem">⚡ FlowPay</p>
+  <p>"The two payment primitives that a billion people in Asia use every day,<br>built as a clean developer API that Stripe doesn't have."</p>
+  <p style="margin-top:1.5rem">Built at <strong>HackIllinois 2026</strong> · <strong>Stripe Track</strong> · <strong>Capital One Nessie</strong></p>
+  <p style="margin-top:.5rem">API: <a href="http://localhost:8000/docs" style="color:var(--blue)">localhost:8000/docs</a> · Dashboard: <a href="http://localhost:5173" style="color:var(--blue)">localhost:5173</a></p>
+</footer>
+
+</body>
+</html>
